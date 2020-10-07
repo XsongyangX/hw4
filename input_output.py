@@ -156,5 +156,7 @@ def output(slice: str, message: str):
     """
     out_folder = parsed_args.output
 
+    print(slice)
+
     with open(os.path.join(out_folder, os.path.basename(slice)), 'a') as collocations:
         collocations.write("{}\n".format(message))

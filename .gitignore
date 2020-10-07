@@ -1,5 +1,7 @@
 __pycache__/
 .vscode/
+
+input/
 output/
 
 *.csv
