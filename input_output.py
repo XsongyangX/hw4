@@ -4,7 +4,6 @@ Handles the io of the correction program
 import argparse
 from argparse import Namespace
 import os
-from sys import stdin
 from typing import Dict, Iterator
 import time
 
@@ -13,6 +12,11 @@ parsed_args: Namespace
 class Timer:
     __instance = None
     is_timing = False
+
+    @staticmethod
+    def try_to_time():
+        if Timer.is_timing:
+            Timer.__instance.log()
 
     @staticmethod
     def get_current_timer():
@@ -72,7 +76,7 @@ def get_args() -> Dict[str, str]:
     distance_choices = parser.add_mutually_exclusive_group()
 
     distance_choices.add_argument('--bigram', dest='ngram', action='store_const',
-                                  const='bigram',
+                                  const='bigram', default='bigram',
                                   help="Looks for bigrams. Default.")
 
     distance_choices.add_argument('--trigram', dest='ngram', action='store_const',
@@ -92,6 +96,9 @@ def get_args() -> Dict[str, str]:
     # output folder does not exist
     if not os.path.exists(args.output):
         os.makedirs(args.output)
+    else:
+        for file in os.listdir(args.output):
+            os.remove(os.path.join(args.output, file))
 
     # assign arguments to global
     global parsed_args
@@ -115,6 +122,10 @@ def read_corpus() -> Iterator[str]:
     onlyfiles = [os.path.join(path, file) for file in onlyfiles]
     onlyfiles.sort()
 
+    # limited slices
+    if parsed_args.slices != -1:
+        onlyfiles = onlyfiles[:parsed_args.slices]
+
     for slice in onlyfiles:
         yield slice
 
@@ -135,20 +146,15 @@ def read_slice(path: str) -> Iterator[Iterator[str]]:
         for line in slice:
             yield read_line(line)
 
-def output(message: str):
+def output(slice: str, message: str):
     """Creates files at the output directory
     Logs the time, if enabled in the command line.
 
     Args:
+        slice (str): Name of the slice of read so far
         message (str): String to output
     """
-    if parsed_args.output_file is None:
-        print(message)
-    else:
-        with open(parsed_args.output_file, 'a+') as out:
-            out.write(message + "\n")
-    
-    # time
-    if Timer.is_timing:
-        timer = Timer.get_current_timer()
-        timer.log()
+    out_folder = parsed_args.output
+
+    with open(os.path.join(out_folder, os.path.basename(slice)), 'a') as collocations:
+        collocations.write("{}\n".format(message))
