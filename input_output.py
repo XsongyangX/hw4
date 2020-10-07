@@ -9,6 +9,7 @@ import time
 
 parsed_args: Namespace
 
+
 class Timer:
     __instance = None
     is_timing = False
@@ -65,7 +66,7 @@ def get_args() -> Dict[str, str]:
     parser.add_argument('output',
                         help="Output folder of the most salient collocations (bigrams or trigrams). Exported in slices.")
 
-    parser.add_argument('--slices', type=int, default='-1', metavar='n',\
+    parser.add_argument('--slices', type=int, default='-1', metavar='n',
                         help="How many slices of the corpus to use. Default is all slices.")
 
     parser.add_argument('--time', dest='is_timing', action='store_const', const=True,
@@ -86,8 +87,8 @@ def get_args() -> Dict[str, str]:
     # parse the args
     args = parser.parse_args()
 
-    arg_dict = {"input_folder":args.input, "output_folder":args.output,\
-        "ngram":args.ngram}
+    arg_dict = {"input_folder": args.input, "output_folder": args.output,
+                "ngram": args.ngram}
 
     # input folder does not exist
     if not os.path.exists(args.input):
@@ -110,6 +111,7 @@ def get_args() -> Dict[str, str]:
 
     return arg_dict
 
+
 def read_corpus() -> Iterator[str]:
     """Reads from the corpus folder
 
@@ -118,7 +120,8 @@ def read_corpus() -> Iterator[str]:
     """
     path = parsed_args.input
 
-    onlyfiles = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
+    onlyfiles = [f for f in os.listdir(
+        path) if os.path.isfile(os.path.join(path, f))]
     onlyfiles = [os.path.join(path, file) for file in onlyfiles]
     onlyfiles.sort()
 
@@ -129,9 +132,11 @@ def read_corpus() -> Iterator[str]:
     for slice in onlyfiles:
         yield slice
 
+
 def read_line(line: str) -> Iterator[str]:
     for word in line.split():
         yield word
+
 
 def read_slice(path: str) -> Iterator[Iterator[str]]:
     """Reads line by line the slice, lines are turned into iterable str lists
@@ -146,6 +151,7 @@ def read_slice(path: str) -> Iterator[Iterator[str]]:
         for line in slice:
             yield read_line(line)
 
+
 def output(slice: str, message: str):
     """Creates files at the output directory
     Logs the time, if enabled in the command line.
@@ -155,7 +161,6 @@ def output(slice: str, message: str):
         message (str): String to output
     """
     out_folder = parsed_args.output
-
 
     with open(os.path.join(out_folder, os.path.basename(slice)), 'a') as collocations:
         collocations.write("{}\n".format(message))

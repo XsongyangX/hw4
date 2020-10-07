@@ -6,6 +6,7 @@ from gensim.models.phrases import Phrases, Phraser, npmi_scorer
 
 from input_output import Timer, output, read_corpus, read_slice, get_args
 
+
 def salient_bigrams(phrases: Phrases):
     """Finds the most salient bigrams
 
@@ -15,25 +16,52 @@ def salient_bigrams(phrases: Phrases):
     for slice in read_corpus():
         phrases.add_vocab(read_slice(slice))
 
-        found = set(((phrase, score) for phrase, score in phrases.export_phrases(read_slice(slice))))
+        # evaluate all previous corpus slices
+        found = set()
+        total_bigrams_encountered = 0
+        for previous_slice in read_corpus():
+            for phrase, score in phrases.export_phrases(read_slice(previous_slice)):
+                found.add((phrase, score))
+                total_bigrams_encountered += 1
+            if previous_slice == slice:
+                break
+
         found = sorted(found, key=lambda element: element[1], reverse=True)
 
+        # no bigrams found?
         if len(found) == 0:
             output(slice, "")
 
-        for phrase, score in found:
-            output(slice, "{phrase}, {score}".format(phrase=phrase, score=score))
+        # log the top ten bigrams
+        for phrase, score in found[:10]:
+            output(slice, "{phrase}, {score}".format(
+                phrase=phrase, score=score))
+
+        # log the total counts
+        output(slice,
+"""
+Total bigrams: {total}
+Unique bigrams: {unique}
+Max score:{max}
+Min score:{min}
+"""
+               .format(total=total_bigrams_encountered,
+                       unique=len(found),
+                       max=found[0],
+                       min=found[-1]))
 
         # will log a time if command line args were enabled
         Timer.try_to_time()
 
+
 def main():
-    
+
     args = get_args()
 
     phrases = Phrases()
 
     salient_bigrams(phrases)
+
 
 if __name__ == "__main__":
     main()
