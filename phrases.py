@@ -31,7 +31,7 @@ def main():
     
     args = get_args()
 
-    phrases = Phrases(min_count=1, threshold=1)
+    phrases = Phrases()
 
     salient_bigrams(phrases)
 
