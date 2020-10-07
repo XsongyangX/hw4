@@ -1,20 +1,26 @@
 """
 Finds the most salient bigrams and trigrams
 """
-
 from typing import Iterator
-from gensim.test.utils import datapath
-from gensim.models.phrases import Phrases, Phraser
+from gensim.models.phrases import Phrases, Phraser, npmi_scorer
 
-def read_corpus(path: str) -> Iterator[Iterator[str]]:
-    with open(path, 'r') as corpus:
-        for line in corpus:
-            yield get_sentence(line)
+from input_output import read_corpus, read_slice, get_args
 
-def get_sentence(line: str) -> Iterator[str]:
-    for word in line.split():
-        yield word
+def main():
+    
+    args = get_args()
 
-phrases = Phrases(read_corpus("testcorpus.txt"), min_count=1, threshold=1)
+    phrases: Phrases = None
 
-bigram = Phraser(phrases)
+    for slice in read_corpus():
+        if phrases is None:
+            phrases = Phrases(read_slice(slice))
+        else:
+            phrases.add_vocab(read_slice(slice))
+
+        for phrase, score in phrases.export_phrases(read_slice(slice)):
+            print(phrase, score)
+        
+
+if __name__ == "__main__":
+    main()
