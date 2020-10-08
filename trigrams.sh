@@ -9,8 +9,8 @@ fi
 
 if [ $# -eq 1 ]; then
 	echo "Looking on $1 slice(s)"
-	python phrases.py --trigram --slices $1 --time /u/demorali/corpora/1g-word-lm-benchmark-r13output/training-monolingual.tokenized.shuffled output/trigrams
+	time python get_trigrams.py --slices $1 /u/demorali/corpora/1g-word-lm-benchmark-r13output/training-monolingual.tokenized.shuffled output/trigrams
 else
 	echo "Looking on all slices"
-	python phrases.py --trigram --time /u/demorali/corpora/1g-word-lm-benchmark-r13output/training-monolingual.tokenized.shuffled output/trigrams
+	time python get_trigrams.py /u/demorali/corpora/1g-word-lm-benchmark-r13output/training-monolingual.tokenized.shuffled output/trigrams
 fi
