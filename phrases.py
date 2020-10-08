@@ -79,7 +79,7 @@ def salient_trigrams(phrases: Phrases):
             for phrase, score in trigram.export_phrases(read_slice(previous_slice)):
                 if phrase.count(' ') == 2:
                     found.add((phrase, score))
-                total_trigrams_encountered += 1
+                    total_trigrams_encountered += 1
             if previous_slice == slice:
                 break
 
