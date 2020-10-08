@@ -42,13 +42,15 @@ def salient_bigrams(phrases: Phrases):
 """
 Total bigrams: {total}
 Unique bigrams: {unique}
+Median score:{median}
 Max score:{max}
 Min score:{min}
 """
                .format(total=total_bigrams_encountered,
                        unique=len(found),
-                       max=found[0],
-                       min=found[-1]))
+                       median=found[len(found)//2] if len(found) != 0 else 0,
+                       max=found[0] if len(found) != 0 else 0,
+                       min=found[-1]) if len(found) != 0 else 0)
 
         # will log a time if command line args were enabled
         Timer.try_to_time()
@@ -77,7 +79,7 @@ def salient_trigrams(phrases: Phrases):
         total_trigrams_encountered = 0
         for previous_slice in read_corpus():
             for phrase, score in trigram.export_phrases(read_slice(previous_slice)):
-                if phrase.count(' ') == 2:
+                if phrase.count(b' ') == 2:
                     found.add((phrase, score))
                     total_trigrams_encountered += 1
             if previous_slice == slice:
@@ -99,11 +101,13 @@ def salient_trigrams(phrases: Phrases):
 """
 Total trigrams: {total}
 Unique trigrams: {unique}
+Mean score:{median}
 Max score:{max}
 Min score:{min}
 """
                .format(total=total_trigrams_encountered,
                        unique=len(found),
+                       median=found[len(found)//2] if len(found) != 0 else 0,
                        max=found[0] if len(found) != 0 else 0,
                        min=found[-1] if len(found) != 0 else 0))
 
