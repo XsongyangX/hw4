@@ -36,9 +36,9 @@ def main():
     Max score:{max}
     Min score:{min}
     """.format(unique=len(only_trigrams),
-               mean=mean(scores),
-               max=max(scores),
-               min=min(scores)))
+               mean=mean(scores) if len(scores) != 0 else 0,
+               max=max(scores) if len(scores) != 0 else 0,
+               min=min(scores) if len(scores) != 0 else 0))
 
 
 if __name__ == "__main__":
