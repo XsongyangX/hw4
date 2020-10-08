@@ -14,25 +14,28 @@ def main():
     def sentences(): return chain.from_iterable(
         (read_slice(data) for data in read_corpus()))
 
-    bigram = Phrases(sentences(), min_count=1, threshold=1)
+    bigram = Phrases(sentences(), min_count=1, threshold=1, delimiter=b' ')
     bigram_phraser = Phraser(bigram)
 
     bigrammed = map(lambda x: bigram_phraser[x], sentences())
 
-    trigram = Phrases(bigrammed, min_count=1, threshold=1)
+    trigram = Phrases(bigrammed, min_count=1, threshold=1, delimiter=b' ')
     trigram_phraser = Phraser(trigram)
 
-    for key, value in sorted(trigram_phraser.phrasegrams.items(), key=lambda item: item[1], reverse=True)[:10]:
-        print(b"_".join(key), value)
+    only_trigrams = {b' '.join(trigram_tuple): score for (trigram_tuple, score) in \
+        trigram_phraser.phrasegrams.items() if b' '.join(trigram_tuple).count(b' ') == 2}
 
-    scores = list(trigram_phraser.phrasegrams.values())
+    for key, value in sorted(only_trigrams.items(), key=lambda item: item[1], reverse=True)[:10]:
+        print(key, value)
+
+    scores = list(only_trigrams.values())
     print(
         """
     Unique trigrams: {unique}
     Mean score:{mean}
     Max score:{max}
     Min score:{min}
-    """.format(unique=len(trigram_phraser.phrasegrams),
+    """.format(unique=len(only_trigrams),
                mean=mean(scores),
                max=max(scores),
                min=min(scores)))
