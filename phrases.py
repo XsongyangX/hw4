@@ -74,11 +74,12 @@ def salient_trigrams(phrases: Phrases):
 
         # evaluate all previous corpus slices
         found = set()
-        total_bigrams_encountered = 0
+        total_trigrams_encountered = 0
         for previous_slice in read_corpus():
             for phrase, score in trigram.export_phrases(read_slice(previous_slice)):
-                found.add((phrase, score))
-                total_bigrams_encountered += 1
+                if phrase.count(' ') == 2:
+                    found.add((phrase, score))
+                total_trigrams_encountered += 1
             if previous_slice == slice:
                 break
 
@@ -101,7 +102,7 @@ Unique trigrams: {unique}
 Max score:{max}
 Min score:{min}
 """
-               .format(total=total_bigrams_encountered,
+               .format(total=total_trigrams_encountered,
                        unique=len(found),
                        max=found[0] if len(found) != 0 else 0,
                        min=found[-1] if len(found) != 0 else 0))
