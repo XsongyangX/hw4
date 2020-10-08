@@ -72,16 +72,22 @@ def salient_trigrams(phrases: Phrases):
                 break
         
         # transform sentences into possible bigrams
-        trigram.add_vocab((phrases[sentence] for sentence in read_slice(slice)))
+        bigram_phraser = Phraser(phrases)
+        def bigrammed(slice: str):
+            for sent in read_slice(slice):
+                yield bigram_phraser[sent]
+        trigram.add_vocab(bigrammed(slice))
 
         # evaluate all previous corpus slices
         found = set()
         total_trigrams_encountered = 0
         for previous_slice in read_corpus():
-            for phrase, score in trigram.export_phrases(read_slice(previous_slice)):
-                if phrase.count(b' ') == 2:
+            for phrase, score in trigram.export_phrases(bigrammed(previous_slice)):
+                if phrase.count(b'_') == 2:
                     found.add((phrase, score))
                     total_trigrams_encountered += 1
+                elif '_' in phrase:
+                    print(phrase)
             if previous_slice == slice:
                 break
 
@@ -123,7 +129,7 @@ def main():
     if args['ngram'] == "bigram":
         salient_bigrams(phrases)
     elif args['ngram'] == "trigram":
-        salient_trigrams(phrases)
+        raise Exception("Not implemented here")
 
 
 if __name__ == "__main__":
