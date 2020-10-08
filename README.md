@@ -11,4 +11,4 @@ Runnable Bash scripts:
 
 Runnable Python scripts:
 * `phrases.py [-h] [--slices n] [--time] [--bigram | --trigram] input output`: Runs the `gensim` tool on the given amount of slices of a corpus located in the `input` folder. Partial results will be logged to the given `output` folder, such as bigram counts. Only the `--bigram` works. No slice count given means the entire corpus is to be parsed.
-* `get_trigrams.py [-h] [--slices n] [--time] [--bigram | --trigram] input output`: Runs the `gensim` tool on the given amout of slices of a corpus located in the `input` folder. Does not log partial results, so `output` argument is actually useless, but still mandatory nonetheless. Found trigrams are display in `stdout`. No slice count given means the entire corpus is to be parsed.
+* `get_trigrams.py [-h] [--slices n] [--time] [--bigram | --trigram] input output`: Runs the `gensim` tool on the given amout of slices of a corpus located in the `input` folder. Does not log partial results, so `output` argument is actually useless, but still mandatory nonetheless. Found trigrams are displayed in `stdout`. No slice count given means the entire corpus is to be parsed.
